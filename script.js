@@ -1,195 +1,85 @@
-let transactions =
-JSON.parse(localStorage.getItem("transactions")) || [];
+// ---- Dark Mode Toggle ----
+const darkModeBtn = document.getElementById('darkModeBtn');
 
-
-
-function save(){
-
-localStorage.setItem(
-"transactions",
-JSON.stringify(transactions)
-);
-
+function applyDarkModePreference() {
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark');
+    darkModeBtn.textContent = '☀️ Light Mode';
+  }
 }
 
-
-
-
-function addTransaction(){
-
-
-let title =
-document.getElementById("title").value;
-
-
-let amount =
-Number(document.getElementById("amount").value);
-
-
-let type =
-document.getElementById("type").value;
-
-
-
-if(title=="" || amount<=0){
-
-alert("Enter valid details");
-
-return;
-
-}
-
-
-
-
-let transaction={
-
-id:Date.now(),
-
-title:title,
-
-amount:amount,
-
-type:type
-
-};
-
-
-
-transactions.push(transaction);
-
-
-save();
-
-
-display();
-
-
-document.getElementById("title").value="";
-document.getElementById("amount").value="";
-
-
-}
-
-
-
-
-function display(){
-
-
-let list =
-document.getElementById("list");
-
-
-list.innerHTML="";
-
-
-
-let income=0;
-
-let expense=0;
-
-
-
-transactions.forEach(t=>{
-
-
-let li=document.createElement("li");
-
-
-li.className=t.type;
-
-
-
-li.innerHTML=
-
-`
-${t.title}
-
-<br>
-
-₹${t.amount}
-
-<button onclick="deleteTransaction(${t.id})">
-❌
-</button>
-
-`;
-
-
-
-list.appendChild(li);
-
-
-
-if(t.type=="income"){
-
-income+=t.amount;
-
-}
-
-else{
-
-expense+=t.amount;
-
-}
-
-
-
+darkModeBtn.addEventListener('click', () => {
+  const isDark = document.body.classList.toggle('dark');
+  darkModeBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+  localStorage.setItem('darkMode', isDark);
 });
 
+applyDarkModePreference();
 
+// ---- Transaction Logic ----
+let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
+const nameInput = document.getElementById('name');
+const amountInput = document.getElementById('amount');
+const typeSelect = document.getElementById('type');
+const addBtn = document.getElementById('addBtn');
+const listEl = document.getElementById('transactionList');
 
-document.getElementById("income")
-.innerHTML="₹"+income;
-
-
-document.getElementById("expense")
-.innerHTML="₹"+expense;
-
-
-document.getElementById("balance")
-.innerHTML=
-"₹"+(income-expense);
-
-
-
+function saveTransactions() {
+  localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
+function render() {
+  listEl.innerHTML = '';
+  let income = 0, expense = 0;
 
+  transactions.forEach((tx, index) => {
+    if (tx.type === 'income') income += tx.amount;
+    else expense += tx.amount;
 
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="tx-info">
+        <span>${tx.name}</span>
+        <span class="tx-amount ${tx.type}">
+          ${tx.type === 'income' ? '+' : '-'}₹${tx.amount}
+        </span>
+      </div>
+      <button class="delete-btn" data-index="${index}">✕</button>
+    `;
+    listEl.appendChild(li);
+  });
 
-function deleteTransaction(id){
-
-
-transactions =
-transactions.filter(
-t=>t.id!==id
-);
-
-
-save();
-
-display();
-
-
+  document.getElementById('income').textContent = income;
+  document.getElementById('expense').textContent = expense;
+  document.getElementById('balance').textContent = income - expense;
 }
 
+addBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+  const type = typeSelect.value;
 
+  if (!name || isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid transaction name and amount.');
+    return;
+  }
 
+  transactions.push({ name, amount, type });
+  saveTransactions();
+  render();
 
-document
-.getElementById("darkBtn")
-.onclick=function(){
+  nameInput.value = '';
+  amountInput.value = '';
+});
 
+listEl.addEventListener('click', (e) => {
+  if (e.target.classList.contains('delete-btn')) {
+    const index = e.target.getAttribute('data-index');
+    transactions.splice(index, 1);
+    saveTransactions();
+    render();
+  }
+});
 
-document.body.classList.toggle("dark");
-
-
-};
-
-
-
-
-display();
+render();
