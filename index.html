@@ -1,47 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
+
 <title>Financial Tracker</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
+
+
 <body>
 
-<div class="top-bar">
-  <button id="darkModeBtn">🌙 Dark Mode</button>
+
+<div class="top">
+
+<h1>💰 Financial Tracker</h1>
+
+<button onclick="darkMode()">🌙 Dark Mode</button>
+
 </div>
 
-<h1>Financial Tracker</h1>
+
+
+<div class="container">
+
+
+<div class="balance">
+
+<h3>Your Balance</h3>
+
+<h2>₹ <span id="balance">0</span></h2>
+
+</div>
+
+
+
 
 <div class="card">
-  <h2>Balance</h2>
-  <div class="balance-amount">₹<span id="balance">0</span></div>
 
-  <div class="summary">
-    <div>
-      <h3>Income</h3>
-      <p>₹<span id="income">0</span></p>
-    </div>
-    <div>
-      <h3>Expense</h3>
-      <p>₹<span id="expense">0</span></p>
-    </div>
-  </div>
 
-  <div class="input-row">
-    <input type="text" id="name" placeholder="Transaction name">
-    <input type="number" id="amount" placeholder="Amount">
-    <select id="type">
-      <option value="income">Income</option>
-      <option value="expense">Expense</option>
-    </select>
-    <button id="addBtn">Add</button>
-  </div>
+<h2>Add Transaction</h2>
 
-  <h2>Transactions</h2>
-  <ul id="transactionList"></ul>
+
+<input 
+id="text"
+placeholder="Transaction name">
+
+
+<input 
+id="amount"
+type="number"
+placeholder="Amount">
+
+
+
+<select id="type">
+
+<option value="income">
+Income
+</option>
+
+
+<option value="expense">
+Expense
+</option>
+
+
+</select>
+
+
+
+<button onclick="addTransaction()">
+Add
+</button>
+
+
 </div>
 
+
+
+
+
+<div class="card">
+
+
+<h2>History</h2>
+
+
+<ul id="list"></ul>
+
+
+</div>
+
+
+</div>
+
+
+
 <script src="script.js"></script>
+
+
 </body>
+
 </html>
